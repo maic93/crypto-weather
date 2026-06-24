@@ -1,0 +1,54 @@
+name: Daily Forecast
+
+on:
+  schedule:
+    - cron: "10 0 * * *"   # 00:10 UTC every day
+  workflow_dispatch:
+
+jobs:
+  run-daily-forecast:
+    name: Sync prices & generate forecast
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Run daily pipeline
+        working-directory: backend
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python - <<'EOF'
+          import asyncio
+          from app.db.database import init_db, SessionLocal
+          from app.services.price_service import sync_price_history
+          from app.services.forecast_service import generate_and_store, evaluate_past_forecasts
+
+          async def main():
+              init_db()
+              db = SessionLocal()
+              try:
+                  synced = await sync_price_history(db, days=90)
+                  print(f"Synced {synced} new price rows")
+                  evaluated = evaluate_past_forecasts(db)
+                  print(f"Evaluated {evaluated} past forecasts")
+                  generate_and_store(db)
+                  print("New forecast generated and stored")
+              finally:
+                  db.close()
+
+          asyncio.run(main())
+          EOF
+
+      - name: Post status
+        if: failure()
+        run: echo "Daily forecast pipeline FAILED" && exit 1

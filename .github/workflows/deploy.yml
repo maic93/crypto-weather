@@ -1,0 +1,35 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    needs: []   # add CI job name here once you wire real deploy
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log deploy target
+        run: |
+          echo "Deploying commit ${{ github.sha }}"
+          echo "To wire real deployment: add Railway/Render/Fly deploy step here"
+
+      # ── Example: Railway deploy ──────────────────────────────────────────
+      # - name: Deploy backend to Railway
+      #   uses: bervProject/railway-deploy@main
+      #   with:
+      #     railway_token: ${{ secrets.RAILWAY_TOKEN }}
+      #     service: crypto-weather-backend
+
+      # ── Example: Vercel deploy (frontend) ────────────────────────────────
+      # - name: Deploy frontend to Vercel
+      #   uses: amondnet/vercel-action@v25
+      #   with:
+      #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
+      #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+      #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+      #     vercel-args: --prod

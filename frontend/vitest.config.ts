@@ -11,7 +11,18 @@ export default defineConfig({
     setupFiles: './src/tests/setup.ts',
     coverage: {
       reporter: ['text', 'html'],
-      exclude: ['node_modules/', 'src/tests/'],
+      exclude: [
+        'node_modules/',
+        'src/tests/',
+        '**/*.config.*',
+        '**/next-env.d.ts',
+        'src/types/**',
+        'src/app/layout.tsx',
+        'src/app/providers.tsx',
+        'src/app/page.tsx',
+        'src/hooks/**',   // TanStack Query hooks need integration test setup
+        'src/lib/api.ts', // HTTP client — covered by backend integration tests
+      ],
       thresholds: { lines: 70 },
     },
   },

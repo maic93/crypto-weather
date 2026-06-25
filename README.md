@@ -1,9 +1,8 @@
 # ⛅ Crypto Weather
 
-> Bitcoin price forecasts inspired by Apple Weather.
-> Real-time BTC market conditions with a 7-day outlook, weather-style confidence scoring, and accuracy tracking.
+> Real-time crypto market conditions with a 7-day outlook, weather-style confidence scoring, and accuracy tracking.
 
-![CI](https://github.com/YOUR_USERNAME/crypto-weather/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/maic93/crypto-weather/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 ---
@@ -44,7 +43,7 @@ Today's Forecast:
 | Backend  | FastAPI · Python 3.12                   |
 | ML       | Pandas · NumPy · scikit-learn           |
 | DB       | PostgreSQL · SQLAlchemy                 |
-| Tests    | Pytest (≥85% coverage) · Vitest         |
+| Tests    | Pytest (≥90% coverage) · Vitest         |
 | CI/CD    | GitHub Actions                          |
 | Deploy   | Docker · docker-compose                 |
 
@@ -55,7 +54,7 @@ Today's Forecast:
 ### With Docker (recommended)
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/crypto-weather
+git clone https://github.com/maic93/crypto-weather
 cd crypto-weather
 docker compose up --build
 ```
@@ -85,25 +84,25 @@ npm run dev
 
 ## API
 
-| Endpoint        | Description                          |
-|-----------------|--------------------------------------|
-| `GET /api/health`    | Service health + DB status      |
-| `GET /api/current`   | Live BTC price                  |
-| `GET /api/forecast`  | Full forecast (hero + 7-day)    |
-| `GET /api/history`   | Historical OHLC (default 30d)   |
-| `GET /api/accuracy`  | 30-day forecast accuracy report |
-| `GET /api/metrics`   | RSI, MACD, SMA, EMA, etc.      |
+| Endpoint             | Description                          |
+|----------------------|--------------------------------------|
+| `GET /api/health`    | Service health + DB status           |
+| `GET /api/current`   | Live price                           |
+| `GET /api/forecast`  | Full forecast (hero + 7-day)         |
+| `GET /api/history`   | Historical OHLC (default 30d)        |
+| `GET /api/accuracy`  | 30-day forecast accuracy report      |
+| `GET /api/metrics`   | RSI, MACD, SMA, EMA, etc.           |
 
 ---
 
 ## Testing
 
 ```bash
-# Backend
+# Backend (77 tests, 90% coverage)
 cd backend
 pytest
 
-# Frontend
+# Frontend (60 tests, 93% coverage)
 cd frontend
 npm test
 ```

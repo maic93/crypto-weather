@@ -9,8 +9,8 @@ from app.schemas.forecast import AccuracyMetrics
 
 
 class TestGetAccuracy:
-    def test_returns_zero_when_no_records(self, db):
-        result = get_accuracy(db, 30)
+    def test_returns_zero_when_no_records(self, isolated_db):
+        result = get_accuracy(isolated_db, 30)
         assert isinstance(result, AccuracyMetrics)
         assert result.total_forecasts == 0
         assert result.direction_accuracy == 0.0
@@ -119,3 +119,34 @@ class TestPriceService:
         assert len(rows) > 0
         assert all(isinstance(r, dict) for r in rows)
         assert all("close" in r for r in rows)
+
+
+class TestGenerateAndStore:
+    def test_raises_without_price_data(self, isolated_db):
+        from app.services.forecast_service import generate_and_store
+        with pytest.raises(Exception):
+            generate_and_store(isolated_db)
+
+    def test_returns_signal_result(self, isolated_db, sample_ohlc):
+        from app.models.price import PriceHistory
+        from app.services.forecast_service import generate_and_store
+        from app.forecast.engine import SignalResult
+        for row in sample_ohlc:
+            isolated_db.add(PriceHistory(**row, change_pct=0.0, market_cap=0.0))
+        isolated_db.commit()
+        result = generate_and_store(isolated_db)
+        assert isinstance(result, SignalResult)
+        assert 0 <= result.score <= 100
+
+    def test_skips_duplicate_forecasts(self, isolated_db, sample_ohlc):
+        from app.models.price import PriceHistory
+        from app.models.forecast import ForecastRecord
+        from app.services.forecast_service import generate_and_store
+        for row in sample_ohlc:
+            isolated_db.add(PriceHistory(**row, change_pct=0.0, market_cap=0.0))
+        isolated_db.commit()
+        generate_and_store(isolated_db)
+        count1 = isolated_db.query(ForecastRecord).count()
+        generate_and_store(isolated_db)
+        count2 = isolated_db.query(ForecastRecord).count()
+        assert count2 == count1

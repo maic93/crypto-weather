@@ -16,7 +16,7 @@ export function ForecastCard({ high, low, confidence }: Props) {
     <div className="glass-card px-5 py-4">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-xs text-white/40 uppercase tracking-widest font-medium">
-          Today's Forecast
+          Today&apos;s Forecast
         </span>
       </div>
 

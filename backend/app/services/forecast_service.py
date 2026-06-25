@@ -1,5 +1,5 @@
 # backend/app/services/forecast_service.py
-from datetime import date, datetime
+from datetime import date
 from sqlalchemy.orm import Session
 from app.models.forecast import ForecastRecord
 from app.models.price import PriceHistory

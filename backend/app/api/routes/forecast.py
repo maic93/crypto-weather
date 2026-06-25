@@ -9,7 +9,7 @@ from app.schemas.forecast import (
 )
 from app.services.coingecko import coingecko
 from app.services.price_service import get_history, get_all_ohlc, sync_price_history
-from app.services.forecast_service import generate_and_store, get_accuracy
+from app.services.forecast_service import get_accuracy
 from app.forecast.engine import run_forecast, run_seven_day
 from app.core.config import settings
 

@@ -52,7 +52,6 @@ async def sync_price_history(db: Session, days: int = 90) -> int:
 
 
 def get_history(db: Session, days: int = 30) -> list[PriceHistory]:
-    from datetime import datetime
     cutoff = (date.today() - timedelta(days=days)).isoformat()
     return (
         db.query(PriceHistory)

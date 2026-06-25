@@ -1,7 +1,6 @@
 # backend/app/schemas/forecast.py
 from pydantic import BaseModel, Field
 from typing import Literal, Optional
-from datetime import datetime
 
 WeatherCondition = Literal[
     "strong_bullish", "bullish", "neutral", "bearish", "strong_bearish"

@@ -1,7 +1,9 @@
 // src/lib/api.ts
 import type { ForecastData, HistoricalDay, AccuracyMetrics, CurrentPrice, MarketMetrics } from '@/types'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+// On Vercel: frontend and backend are on the same domain, so /api/* works directly.
+// Locally: point to http://localhost:8000
+const API_URL = process.env.NEXT_PUBLIC_API_URL || ''
 
 async function fetchAPI<T>(path: string): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {

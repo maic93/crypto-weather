@@ -2,18 +2,21 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from app.core.config import settings
 from app.db.database import init_db, SessionLocal
 from app.api.routes.forecast import router
 from app.services.price_service import sync_price_history
 from app.services.forecast_service import generate_and_store, evaluate_past_forecasts
 
-scheduler = AsyncIOScheduler()
+# Only use APScheduler when running locally (not on Vercel serverless)
+_scheduler = None
+
+if settings.use_scheduler:
+    from apscheduler.schedulers.asyncio import AsyncIOScheduler
+    _scheduler = AsyncIOScheduler()
 
 
 async def daily_job():
-    """Run every day: sync prices → evaluate past → generate new forecast."""
     db = SessionLocal()
     try:
         await sync_price_history(db, days=90)
@@ -25,32 +28,29 @@ async def daily_job():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
     init_db()
-
-    # Initial sync on startup
     db = SessionLocal()
     try:
         await sync_price_history(db, days=90)
     except Exception as e:
-        print(f"[startup] Price sync failed (will retry): {e}")
+        print(f"[startup] Price sync failed: {e}")
     finally:
         db.close()
 
-    # Schedule daily job at 00:10 UTC
-    scheduler.add_job(daily_job, "cron", hour=0, minute=10)
-    scheduler.start()
+    if _scheduler:
+        _scheduler.add_job(daily_job, "cron", hour=0, minute=10)
+        _scheduler.start()
 
     yield
 
-    # Shutdown
-    scheduler.shutdown()
+    if _scheduler:
+        _scheduler.shutdown()
 
 
 app = FastAPI(
     title=settings.app_name,
     version=settings.version,
-    description="Bitcoin market conditions forecast API — like a weather app for BTC.",
+    description="Crypto market conditions forecast API.",
     lifespan=lifespan,
 )
 

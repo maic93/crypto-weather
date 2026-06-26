@@ -43,7 +43,7 @@ def client(db):
     mock_scheduler.shutdown = MagicMock()
 
     with patch("app.main.sync_price_history", _noop_sync), \
-         patch("app.main.scheduler", mock_scheduler):
+         patch("app.main._scheduler", mock_scheduler):
         from app.main import app
         def override_get_db():
             try:

@@ -7,6 +7,25 @@
 
 ---
 
+## Screenshots
+
+<div align="center">
+
+### Current Conditions & 7-Day Outlook
+![Hero and forecast view](docs/screenshots/hero.png)
+
+### Price Chart — 30-Day History + Forecast
+![Price chart](docs/screenshots/chart.png)
+
+### Market Indicators & Accuracy Tracking
+![Metrics and accuracy](docs/screenshots/metrics.png)
+
+</div>
+
+> **To add screenshots:** run the app, take a screenshot, save as `docs/screenshots/hero.png`, `chart.png`, `metrics.png`, then push.
+
+---
+
 ## What it looks like
 
 ```
@@ -38,12 +57,12 @@ Today's Forecast:
 | Layer    | Technology                              |
 |----------|-----------------------------------------|
 | Frontend | Next.js 14 · TypeScript · Tailwind CSS  |
-| UI       | Framer Motion · Recharts · shadcn/ui    |
+| UI       | Framer Motion · Recharts                |
 | Data     | TanStack Query                          |
 | Backend  | FastAPI · Python 3.12                   |
-| ML       | Pandas · NumPy · scikit-learn           |
+| Analysis | Pandas · NumPy · scikit-learn           |
 | DB       | PostgreSQL · SQLAlchemy                 |
-| Tests    | Pytest (≥90% coverage) · Vitest         |
+| Tests    | Pytest (90% coverage) · Vitest (93%)    |
 | CI/CD    | GitHub Actions                          |
 | Deploy   | Docker · docker-compose                 |
 
@@ -56,12 +75,18 @@ Today's Forecast:
 ```bash
 git clone https://github.com/maic93/crypto-weather
 cd crypto-weather
+cp backend/.env.example backend/.env
 docker compose up --build
 ```
 
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- API docs: http://localhost:8000/docs
+| URL | |
+|-----|-|
+| http://localhost:3000 | App |
+| http://localhost:8000/docs | API docs |
+
+> First run takes ~3–5 minutes to build images.
+
+**Windows 11?** → See the full [Windows 11 Setup Guide](docs/Windows11Setup.md)
 
 ### Local Development
 
@@ -70,6 +95,7 @@ docker compose up --build
 cd backend
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+cp .env.example .env
 uvicorn app.main:app --reload
 ```
 
@@ -98,14 +124,26 @@ npm run dev
 ## Testing
 
 ```bash
-# Backend (77 tests, 90% coverage)
-cd backend
-pytest
+# Backend — 77 tests, 90% coverage
+cd backend && pytest
 
-# Frontend (60 tests, 93% coverage)
-cd frontend
-npm test
+# Frontend — 60 tests, 93% coverage
+cd frontend && npm test
 ```
+
+---
+
+## Releases
+
+Releases are created automatically when you push a version tag:
+
+```bash
+git tag -a v1.0.0 -m "v1.0.0 - Initial release"
+git push origin v1.0.0
+```
+
+GitHub Actions will run all tests and publish a release at
+https://github.com/maic93/crypto-weather/releases
 
 ---
 
@@ -131,21 +169,24 @@ crypto-weather/
 │   │   ├── core/              # Config, settings
 │   │   ├── db/                # SQLAlchemy engine + session
 │   │   ├── forecast/          # Ensemble forecast engine
-│   │   ├── models/            # ORM models (PriceHistory, ForecastRecord)
+│   │   ├── models/            # ORM models
 │   │   ├── schemas/           # Pydantic response schemas
-│   │   └── services/          # CoinGecko, price_service, forecast_service
+│   │   └── services/          # CoinGecko, price, forecast services
 │   └── tests/
-│       ├── unit/              # Engine + service unit tests
-│       └── integration/       # Full API route tests
+│       ├── unit/
+│       └── integration/
 │
 ├── docs/
+│   ├── screenshots/           # App screenshots
+│   ├── Windows11Setup.md      # Full Windows 11 setup guide
 │   ├── Architecture.md
 │   ├── Forecasting.md
 │   └── Contributing.md
 │
 ├── .github/workflows/
 │   ├── ci.yml                 # Test + lint + build on every push
-│   ├── daily-forecast.yml     # Cron: sync + forecast + evaluate
+│   ├── daily-forecast.yml     # Cron: sync prices + generate forecast
+│   ├── release.yml            # Auto-release on version tags
 │   └── deploy.yml             # Deploy on merge to main
 │
 └── docker-compose.yml
@@ -155,6 +196,7 @@ crypto-weather/
 
 ## Docs
 
+- [Windows 11 Setup Guide](docs/Windows11Setup.md)
 - [Architecture](docs/Architecture.md)
 - [Forecasting methodology](docs/Forecasting.md)
 - [Contributing](docs/Contributing.md)

@@ -1,18 +1,16 @@
-# frontend/api/cron/daily.py
+# api/cron/daily.py - at repo root
 import sys
 import os
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'backend'))
-
 db_url = os.environ.get("DATABASE_URL", "")
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
 if db_url.startswith("postgresql://"):
-    os.environ["DATABASE_URL"] = db_url.replace(
-        "postgresql://", "postgresql+pg8000://", 1
-    )
-elif db_url.startswith("postgres://"):
-    os.environ["DATABASE_URL"] = db_url.replace(
-        "postgres://", "postgresql+pg8000://", 1
-    )
+    db_url = db_url.replace("postgresql://", "postgresql+pg8000://", 1)
+if db_url:
+    os.environ["DATABASE_URL"] = db_url
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'backend'))
 
 from mangum import Mangum
 from fastapi import FastAPI

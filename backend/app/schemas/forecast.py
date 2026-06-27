@@ -1,83 +1,160 @@
 # backend/app/schemas/forecast.py
-from pydantic import BaseModel, Field
 from typing import Literal, Optional
 
-WeatherCondition = Literal[
-    "strong_bullish", "bullish", "neutral", "bearish", "strong_bearish"
-]
+try:
+    from pydantic import BaseModel, Field
 
+    WeatherCondition = Literal[
+        "strong_bullish", "bullish", "neutral", "bearish", "strong_bearish"
+    ]
 
-class WeatherState(BaseModel):
-    condition: WeatherCondition
-    label: str
-    icon: str
-    score: float = Field(ge=0, le=100)
+    class WeatherState(BaseModel):
+        condition: WeatherCondition
+        label: str
+        icon: str
+        score: float
 
+    class CurrentPrice(BaseModel):
+        price: float
+        change_24h: float
+        change_24h_pct: float
+        market_cap: float
+        volume_24h: float
+        last_updated: str
 
-class CurrentPrice(BaseModel):
-    price: float
-    change_24h: float
-    change_24h_pct: float
-    market_cap: float
-    volume_24h: float
-    last_updated: str
+    class DayForecast(BaseModel):
+        date: str
+        condition: WeatherCondition
+        label: str
+        icon: str
+        high: float
+        low: float
+        confidence: float
+        score: float
 
+    class ForecastResponse(BaseModel):
+        current: CurrentPrice
+        weather: WeatherState
+        today_high: float
+        today_low: float
+        confidence: float
+        seven_day: list[DayForecast]
+        generated_at: str
 
-class DayForecast(BaseModel):
-    date: str
-    condition: WeatherCondition
-    label: str
-    icon: str
-    high: float
-    low: float
-    confidence: float = Field(ge=0, le=100)
-    score: float = Field(ge=0, le=100)
+    class HistoricalDay(BaseModel):
+        date: str
+        open: float
+        high: float
+        low: float
+        close: float
+        volume: float
+        change_pct: float
 
+    class AccuracyMetrics(BaseModel):
+        period_days: int
+        mean_absolute_error: float
+        mean_absolute_pct_error: float
+        direction_accuracy: float
+        within_range_accuracy: float
+        total_forecasts: int
 
-class ForecastResponse(BaseModel):
-    current: CurrentPrice
-    weather: WeatherState
-    today_high: float
-    today_low: float
-    confidence: float
-    seven_day: list[DayForecast]
-    generated_at: str
+    class MarketMetrics(BaseModel):
+        rsi: float
+        macd_signal: Literal["bullish", "bearish", "neutral"]
+        trend: Literal["up", "down", "sideways"]
+        volatility: Literal["low", "medium", "high", "extreme"]
+        support: float
+        resistance: float
+        sma_20: float
+        sma_50: float
+        ema_12: float
+        ema_26: float
 
+    class HealthResponse(BaseModel):
+        status: str
+        version: str
+        database: str
+        last_price_update: Optional[str] = None
 
-class HistoricalDay(BaseModel):
-    date: str
-    open: float
-    high: float
-    low: float
-    close: float
-    volume: float
-    change_pct: float
+except ImportError:
+    # Fallback for Vercel serverless without pydantic
+    # Use plain dicts — FastAPI will still serialize them correctly
+    from dataclasses import dataclass
 
+    WeatherCondition = str
 
-class AccuracyMetrics(BaseModel):
-    period_days: int
-    mean_absolute_error: float
-    mean_absolute_pct_error: float
-    direction_accuracy: float
-    within_range_accuracy: float
-    total_forecasts: int
+    @dataclass
+    class WeatherState:
+        condition: str
+        label: str
+        icon: str
+        score: float
 
+    @dataclass
+    class CurrentPrice:
+        price: float
+        change_24h: float
+        change_24h_pct: float
+        market_cap: float
+        volume_24h: float
+        last_updated: str
 
-class MarketMetrics(BaseModel):
-    rsi: float
-    macd_signal: Literal["bullish", "bearish", "neutral"]
-    trend: Literal["up", "down", "sideways"]
-    volatility: Literal["low", "medium", "high", "extreme"]
-    support: float
-    resistance: float
-    sma_20: float
-    sma_50: float
-    ema_12: float
-    ema_26: float
+    @dataclass
+    class DayForecast:
+        date: str
+        condition: str
+        label: str
+        icon: str
+        high: float
+        low: float
+        confidence: float
+        score: float
 
+    @dataclass
+    class ForecastResponse:
+        current: object
+        weather: object
+        today_high: float
+        today_low: float
+        confidence: float
+        seven_day: list
+        generated_at: str
 
-class HealthResponse(BaseModel):
-    status: str
-    version: str
-    database: str
-    last_price_update: Optional[str] = None
+    @dataclass
+    class HistoricalDay:
+        date: str
+        open: float
+        high: float
+        low: float
+        close: float
+        volume: float
+        change_pct: float
+
+    @dataclass
+    class AccuracyMetrics:
+        period_days: int
+        mean_absolute_error: float
+        mean_absolute_pct_error: float
+        direction_accuracy: float
+        within_range_accuracy: float
+        total_forecasts: int
+
+    @dataclass
+    class MarketMetrics:
+        rsi: float
+        macd_signal: str
+        trend: str
+        volatility: str
+        support: float
+        resistance: float
+        sma_20: float
+        sma_50: float
+        ema_12: float
+        ema_26: float
+
+    @dataclass
+    class HealthResponse:
+        status: str
+        version: str
+        database: str
+        last_price_update: Optional[str] = None

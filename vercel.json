@@ -6,9 +6,17 @@
     "api/index.py": {
       "runtime": "python3.12",
       "maxDuration": 30
+    },
+    "api/cron/daily.py": {
+      "runtime": "python3.12",
+      "maxDuration": 30
     }
   },
   "routes": [
+    {
+      "src": "/api/cron/daily",
+      "dest": "/api/cron/daily.py"
+    },
     {
       "src": "/api/(.*)",
       "dest": "/api/index.py"
@@ -19,8 +27,5 @@
       "path": "/api/cron/daily",
       "schedule": "10 0 * * *"
     }
-  ],
-  "env": {
-    "NEXT_PUBLIC_API_URL": ""
-  }
+  ]
 }

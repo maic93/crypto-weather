@@ -2,7 +2,7 @@
 from typing import Literal, Optional
 
 try:
-    from pydantic import BaseModel, Field
+    from pydantic import BaseModel
 
     WeatherCondition = Literal[
         "strong_bullish", "bullish", "neutral", "bearish", "strong_bearish"

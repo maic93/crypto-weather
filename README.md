@@ -11,18 +11,13 @@
 
 <div align="center">
 
-### Current Conditions & 7-Day Outlook
 ![Hero and forecast view](docs/screenshots/hero.png)
 
-### Price Chart — 30-Day History + Forecast
 ![Price chart](docs/screenshots/chart.png)
 
-### Market Indicators & Accuracy Tracking
 ![Metrics and accuracy](docs/screenshots/metrics.png)
 
 </div>
-
-> **To add screenshots:** run the app, take a screenshot, save as `docs/screenshots/hero.png`, `chart.png`, `metrics.png`, then push.
 
 ---
 
@@ -64,7 +59,7 @@ Today's Forecast:
 | DB       | PostgreSQL · SQLAlchemy                 |
 | Tests    | Pytest (90% coverage) · Vitest (93%)    |
 | CI/CD    | GitHub Actions                          |
-| Deploy   | Docker · docker-compose                 |
+| Deploy   | Vercel · Supabase                       |
 
 ---
 
@@ -85,8 +80,6 @@ docker compose up --build
 | http://localhost:8000/docs | API docs |
 
 > First run takes ~3–5 minutes to build images.
-
-**Windows 11?** → See the full [Windows 11 Setup Guide](docs/Windows11Setup.md)
 
 ### Local Development
 
@@ -112,7 +105,7 @@ npm run dev
 
 | Endpoint             | Description                          |
 |----------------------|--------------------------------------|
-| `GET /api/health`    | Service health + DB status           |
+| `GET /api/health`    | Service health                       |
 | `GET /api/current`   | Live price                           |
 | `GET /api/forecast`  | Full forecast (hero + 7-day)         |
 | `GET /api/history`   | Historical OHLC (default 30d)        |
@@ -133,42 +126,27 @@ cd frontend && npm test
 
 ---
 
-## Releases
-
-Releases are created automatically when you push a version tag:
-
-```bash
-git tag -a v1.0.0 -m "v1.0.0 - Initial release"
-git push origin v1.0.0
-```
-
-GitHub Actions will run all tests and publish a release at
-https://github.com/maic93/crypto-weather/releases
-
----
-
 ## Project Structure
 
 ```
 crypto-weather/
 ├── frontend/
 │   ├── src/
-│   │   ├── app/               # Next.js app router
+│   │   ├── app/
+│   │   │   └── api/           # Next.js API routes (forecast engine)
 │   │   ├── components/
 │   │   │   ├── cards/         # HeroCard, ForecastCard, SevenDayCard…
 │   │   │   ├── charts/        # PriceChart (recharts)
 │   │   │   └── layout/        # AnimatedBackground, LoadingScreen…
 │   │   ├── hooks/             # TanStack Query hooks
-│   │   ├── lib/               # api client, utils
+│   │   ├── lib/               # forecast engine, utils, api client
 │   │   └── types/             # TypeScript interfaces
 │   └── src/tests/             # Vitest unit + component tests
 │
 ├── backend/
 │   ├── app/
 │   │   ├── api/routes/        # FastAPI route handlers
-│   │   ├── core/              # Config, settings
-│   │   ├── db/                # SQLAlchemy engine + session
-│   │   ├── forecast/          # Ensemble forecast engine
+│   │   ├── forecast/          # Ensemble forecast engine (Python)
 │   │   ├── models/            # ORM models
 │   │   ├── schemas/           # Pydantic response schemas
 │   │   └── services/          # CoinGecko, price, forecast services
@@ -178,14 +156,13 @@ crypto-weather/
 │
 ├── docs/
 │   ├── screenshots/           # App screenshots
-│   ├── Windows11Setup.md      # Full Windows 11 setup guide
 │   ├── Architecture.md
 │   ├── Forecasting.md
 │   └── Contributing.md
 │
 ├── .github/workflows/
 │   ├── ci.yml                 # Test + lint + build on every push
-│   ├── daily-forecast.yml     # Cron: sync prices + generate forecast
+│   ├── daily-forecast.yml     # Daily price sync + forecast generation
 │   ├── release.yml            # Auto-release on version tags
 │   └── deploy.yml             # Deploy on merge to main
 │
@@ -196,7 +173,6 @@ crypto-weather/
 
 ## Docs
 
-- [Windows 11 Setup Guide](docs/Windows11Setup.md)
 - [Architecture](docs/Architecture.md)
 - [Forecasting methodology](docs/Forecasting.md)
 - [Contributing](docs/Contributing.md)

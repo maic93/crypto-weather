@@ -4,16 +4,28 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-def _get_sync_url(url: str) -> str:
-    """Convert asyncpg URL back to sync for SQLAlchemy sync engine."""
-    return url.replace("postgresql+asyncpg://", "postgresql://")
-
 _raw_url = os.environ.get("DATABASE_URL", "sqlite:///./crypto_weather.db")
-DATABASE_URL = _get_sync_url(_raw_url)
 
-connect_args = {"check_same_thread": False} if "sqlite" in DATABASE_URL else {}
+# Normalize URL variants to what SQLAlchemy expects
+DATABASE_URL = (
+    _raw_url
+    .replace("postgres://", "postgresql://")
+    .replace("postgresql+asyncpg://", "postgresql://")
+)
 
-engine = create_engine(DATABASE_URL, connect_args=connect_args)
+if "sqlite" in DATABASE_URL:
+    connect_args = {"check_same_thread": False}
+    engine = create_engine(DATABASE_URL, connect_args=connect_args)
+elif "pg8000" in _raw_url:
+    # pg8000 driver path (Vercel) — needs ssl
+    engine = create_engine(
+        DATABASE_URL.replace("postgresql://", "postgresql+pg8000://"),
+        connect_args={"ssl_context": True},
+    )
+else:
+    # Standard psycopg2 path (local/Docker)
+    engine = create_engine(DATABASE_URL)
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 

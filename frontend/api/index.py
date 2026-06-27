@@ -4,11 +4,15 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'backend'))
 
-# Patch DATABASE_URL to use asyncpg driver for Vercel
+# Patch DATABASE_URL to use pg8000 driver (pure Python, works on any Python version)
 db_url = os.environ.get("DATABASE_URL", "")
 if db_url.startswith("postgresql://"):
     os.environ["DATABASE_URL"] = db_url.replace(
-        "postgresql://", "postgresql+asyncpg://", 1
+        "postgresql://", "postgresql+pg8000://", 1
+    )
+elif db_url.startswith("postgres://"):
+    os.environ["DATABASE_URL"] = db_url.replace(
+        "postgres://", "postgresql+pg8000://", 1
     )
 
 from mangum import Mangum

@@ -1,10 +1,10 @@
-# api/index.py
-# Vercel serverless entry point — wraps FastAPI with Mangum (ASGI adapter)
+# frontend/api/index.py
+# Vercel serverless entry point
 import sys
 import os
 
-# Add backend to path so all app.* imports work
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
+# Path to backend from frontend/api/
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'backend'))
 
 from mangum import Mangum
 from app.core.config import settings
@@ -16,7 +16,6 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI(
     title=settings.app_name,
     version=settings.version,
-    description="Bitcoin market conditions forecast API.",
 )
 
 app.add_middleware(
@@ -33,8 +32,5 @@ app.include_router(router, prefix="/api")
 def root():
     return {"service": settings.app_name, "version": settings.version}
 
-# Initialize DB tables on cold start
 init_db()
-
-# Mangum wraps the ASGI app for AWS Lambda / Vercel
 handler = Mangum(app, lifespan="off")

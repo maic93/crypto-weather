@@ -1,14 +1,4 @@
 {
-  "routes": [
-    {
-      "src": "/api/cron/daily",
-      "dest": "/api/cron/daily.py"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/index.py"
-    }
-  ],
   "crons": [
     {
       "path": "/api/cron/daily",

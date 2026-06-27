@@ -1,0 +1,15 @@
+[run]
+source = app
+omit =
+    app/main.py
+
+[report]
+exclude_lines =
+    # Standard pragma
+    pragma: no cover
+    # Defensive programming
+    raise NotImplementedError
+    # Vercel fallback branches — only run when pydantic not installed
+    except ImportError
+    # Abstract methods
+    @abstractmethod

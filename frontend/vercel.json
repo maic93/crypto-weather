@@ -1,14 +1,4 @@
 {
-  "functions": {
-    "api/index.py": {
-      "runtime": "python3.12",
-      "maxDuration": 30
-    },
-    "api/cron/daily.py": {
-      "runtime": "python3.12",
-      "maxDuration": 30
-    }
-  },
   "routes": [
     {
       "src": "/api/cron/daily",

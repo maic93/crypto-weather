@@ -2,15 +2,14 @@
 import sys
 import os
 
-# psycopg2cffi compatibility shim for Vercel serverless
-try:
-    from psycopg2cffi import compat
-    compat.register()
-except ImportError:
-    pass  # local dev uses regular psycopg2
-
-# Path to backend
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'backend'))
+
+# Patch DATABASE_URL to use asyncpg driver for Vercel
+db_url = os.environ.get("DATABASE_URL", "")
+if db_url.startswith("postgresql://"):
+    os.environ["DATABASE_URL"] = db_url.replace(
+        "postgresql://", "postgresql+asyncpg://", 1
+    )
 
 from mangum import Mangum
 from app.core.config import settings

@@ -2,13 +2,13 @@
 import sys
 import os
 
-try:
-    from psycopg2cffi import compat
-    compat.register()
-except ImportError:
-    pass
-
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'backend'))
+
+db_url = os.environ.get("DATABASE_URL", "")
+if db_url.startswith("postgresql://"):
+    os.environ["DATABASE_URL"] = db_url.replace(
+        "postgresql://", "postgresql+asyncpg://", 1
+    )
 
 from mangum import Mangum
 from fastapi import FastAPI

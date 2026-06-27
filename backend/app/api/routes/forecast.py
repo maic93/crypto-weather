@@ -10,10 +10,15 @@ from app.schemas.forecast import (
 from app.services.coingecko import coingecko
 from app.services.price_service import get_history, get_all_ohlc, sync_price_history
 from app.services.forecast_service import get_accuracy
-from app.forecast.engine import run_forecast, run_seven_day
 from app.core.config import settings
 
 router = APIRouter()
+
+
+def _get_forecast_engine():
+    """Lazy import — only loads pandas/numpy when actually needed."""
+    from app.forecast.engine import run_forecast, run_seven_day
+    return run_forecast, run_seven_day
 
 
 @router.get("/health", response_model=HealthResponse)
@@ -49,13 +54,15 @@ async def get_current():
 @router.get("/forecast", response_model=ForecastResponse)
 async def get_forecast(db: Session = Depends(get_db)):
     try:
-        # Ensure we have price data
         ohlc = get_all_ohlc(db)
         if len(ohlc) < 10:
             await sync_price_history(db, days=90)
             ohlc = get_all_ohlc(db)
 
         current_data = await coingecko.get_current_price()
+
+        # Lazy import of forecast engine (uses pandas/numpy)
+        run_forecast, run_seven_day = _get_forecast_engine()
         result = run_forecast(ohlc)
         seven_day = run_seven_day(ohlc, result.score)
 
@@ -117,7 +124,11 @@ async def get_metrics(db: Session = Depends(get_db)):
     if len(ohlc) < 10:
         await sync_price_history(db, days=90)
         ohlc = get_all_ohlc(db)
+
+    # Lazy import
+    run_forecast, _ = _get_forecast_engine()
     result = run_forecast(ohlc)
+
     return MarketMetrics(
         rsi=result.rsi,
         macd_signal=result.macd_signal,

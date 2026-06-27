@@ -20,8 +20,12 @@ export default defineConfig({
         'src/app/layout.tsx',
         'src/app/providers.tsx',
         'src/app/page.tsx',
-        'src/hooks/**',   // TanStack Query hooks need integration test setup
-        'src/lib/api.ts', // HTTP client — covered by backend integration tests
+        'src/hooks/**',
+        'src/lib/api.ts',
+        // Server-side files - Next.js API routes and server libs
+        'src/app/api/**',
+        'src/lib/coingecko-server.ts',
+        'src/lib/forecast-engine.ts',
       ],
       thresholds: { lines: 70 },
     },

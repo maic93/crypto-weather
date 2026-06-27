@@ -1,9 +1,15 @@
 # frontend/api/index.py
-# Vercel serverless entry point
 import sys
 import os
 
-# Path to backend from frontend/api/
+# psycopg2cffi compatibility shim for Vercel serverless
+try:
+    from psycopg2cffi import compat
+    compat.register()
+except ImportError:
+    pass  # local dev uses regular psycopg2
+
+# Path to backend
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'backend'))
 
 from mangum import Mangum
@@ -13,10 +19,7 @@ from app.api.routes.forecast import router
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(
-    title=settings.app_name,
-    version=settings.version,
-)
+app = FastAPI(title=settings.app_name, version=settings.version)
 
 app.add_middleware(
     CORSMiddleware,

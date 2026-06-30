@@ -1,54 +1,30 @@
-// src/components/layout/AnimatedBackground.tsx
+// frontend/src/components/layout/AnimatedBackground.tsx
 'use client'
 import { motion, AnimatePresence } from 'framer-motion'
-import { getConditionGradient } from '@/lib/utils'
 import type { WeatherCondition } from '@/types'
 
-interface Props {
-  condition: WeatherCondition
+const ORBS: Record<WeatherCondition, [string, string]> = {
+  strong_bullish: ['rgba(52,211,153,0.15)', 'rgba(16,185,129,0.1)'],
+  bullish:        ['rgba(251,191,36,0.12)', 'rgba(59,130,246,0.1)'],
+  neutral:        ['rgba(100,116,139,0.12)', 'rgba(71,85,105,0.08)'],
+  bearish:        ['rgba(248,113,113,0.12)', 'rgba(139,92,246,0.08)'],
+  strong_bearish: ['rgba(239,68,68,0.15)', 'rgba(109,40,217,0.1)'],
 }
 
-export function AnimatedBackground({ condition }: Props) {
-  const gradient = getConditionGradient(condition)
-
+export function AnimatedBackground({ condition }: { condition: WeatherCondition }) {
+  const [c1, c2] = ORBS[condition]
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden">
-      {/* Deep base */}
-      <div className="absolute inset-0 bg-[#070c18]" />
-
-      {/* Animated gradient orbs */}
+    <div style={{ position:'fixed', inset:0, zIndex:-1, overflow:'hidden', background:'#06091a' }}>
       <AnimatePresence mode="wait">
-        <motion.div
-          key={condition}
-          className="absolute inset-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.5 }}
-        >
-          {/* Top orb */}
-          <motion.div
-            className={`absolute -top-40 -left-20 w-[600px] h-[600px] rounded-full bg-gradient-to-br ${gradient} opacity-25 blur-[80px]`}
-            animate={{ scale: [1, 1.1, 1], rotate: [0, 5, 0] }}
-            transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-          />
-          {/* Bottom orb */}
-          <motion.div
-            className={`absolute -bottom-40 -right-20 w-[500px] h-[500px] rounded-full bg-gradient-to-tl ${gradient} opacity-20 blur-[90px]`}
-            animate={{ scale: [1, 1.15, 1], rotate: [0, -5, 0] }}
-            transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-          />
+        <motion.div key={condition} initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} transition={{ duration:1.2 }}>
+          <motion.div animate={{ scale:[1,1.1,1], rotate:[0,5,0] }} transition={{ duration:8,repeat:Infinity,ease:'easeInOut' }}
+            style={{ position:'absolute',top:-200,left:-100,width:500,height:500,borderRadius:'50%',
+              background:`radial-gradient(circle, ${c1} 0%, transparent 70%)`, filter:'blur(60px)' }}/>
+          <motion.div animate={{ scale:[1,1.15,1], rotate:[0,-5,0] }} transition={{ duration:10,repeat:Infinity,ease:'easeInOut',delay:2 }}
+            style={{ position:'absolute',bottom:-200,right:-100,width:400,height:400,borderRadius:'50%',
+              background:`radial-gradient(circle, ${c2} 0%, transparent 70%)`, filter:'blur(70px)' }}/>
         </motion.div>
       </AnimatePresence>
-
-      {/* Subtle noise texture overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-          backgroundSize: '200px',
-        }}
-      />
     </div>
   )
 }

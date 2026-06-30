@@ -1,87 +1,87 @@
-// src/components/cards/HeroCard.tsx
+// frontend/src/components/cards/HeroCard.tsx
 'use client'
 import { motion } from 'framer-motion'
-import { formatPrice, formatChange, getChangeColor, getConditionTextColor } from '@/lib/utils'
+import { WeatherIcon } from '@/components/ui/WeatherIcon'
+import { formatPrice, formatChange, getChangeColor } from '@/lib/utils'
 import type { ForecastData } from '@/types'
 
-interface Props {
-  forecast: ForecastData
+const CONDITION_LABELS: Record<string, string> = {
+  strong_bullish: 'Strong Bullish', bullish: 'Bullish',
+  neutral: 'Neutral', bearish: 'Bearish', strong_bearish: 'Strong Bearish',
+}
+const CONDITION_COLORS: Record<string, string> = {
+  strong_bullish: '#34d399', bullish: '#fbbf24',
+  neutral: '#94a3b8', bearish: '#f87171', strong_bearish: '#ef4444',
+}
+const SUBTITLES: Record<string, string> = {
+  strong_bullish: 'Very high buying pressure',
+  bullish: 'High buying pressure expected',
+  neutral: 'Market in equilibrium',
+  bearish: 'Selling pressure dominant',
+  strong_bearish: 'Very high selling pressure',
 }
 
-const WEATHER_ICONS: Record<string, string> = {
-  strong_bullish: '☀️',
-  bullish: '⛅',
-  neutral: '☁️',
-  bearish: '🌧️',
-  strong_bearish: '⛈️',
-}
+interface Props { forecast: ForecastData }
 
 export function HeroCard({ forecast }: Props) {
   const { current, weather } = forecast
   const changeColor = getChangeColor(current.change_24h_pct)
-  const conditionColor = getConditionTextColor(weather.condition)
-  const icon = WEATHER_ICONS[weather.condition] ?? '☁️'
+  const condColor = CONDITION_COLORS[weather.condition] ?? '#94a3b8'
 
   return (
-    <div className="glass-card-strong px-6 py-8 text-center">
-      {/* Condition label */}
-      <motion.p
-        className={`text-sm font-semibold tracking-wide uppercase mb-2 ${conditionColor}`}
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-      >
-        {weather.label}
-      </motion.p>
+    <div style={{
+      background: 'linear-gradient(150deg,#0e1535 0%,#07102a 60%,#060d20 100%)',
+      border: '1px solid rgba(255,255,255,0.09)', borderRadius: 22,
+      padding: '14px 18px 12px', position: 'relative', overflow: 'hidden', flexShrink: 0,
+    }}>
+      <div style={{ position:'absolute',top:0,left:0,right:0,height:1,
+        background:`linear-gradient(90deg,transparent,${condColor}66,rgba(56,189,248,0.3),transparent)` }} />
 
-      {/* Giant weather icon */}
-      <motion.div
-        className="text-7xl my-4 select-none"
-        initial={{ scale: 0.5, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-        whileHover={{ scale: 1.05 }}
-      >
-        {icon}
-      </motion.div>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
+        <div style={{ display:'flex',alignItems:'center',gap:5,
+          background:'rgba(247,147,26,0.1)',border:'1px solid rgba(247,147,26,0.18)',
+          borderRadius:100,padding:'4px 10px 4px 6px' }}>
+          <div style={{ width:18,height:18,borderRadius:'50%',
+            background:'linear-gradient(135deg,#f7931a,#e8830f)',
+            display:'flex',alignItems:'center',justifyContent:'center',
+            fontSize:9,fontWeight:800,color:'#fff' }}>₿</div>
+          <span style={{ fontSize:11,fontWeight:600,color:'rgba(255,255,255,0.65)' }}>Bitcoin · BTC/USD</span>
+        </div>
+        <motion.div initial={{ scale:0.8,opacity:0 }} animate={{ scale:1,opacity:1 }}
+          transition={{ type:'spring',stiffness:200,damping:15 }}>
+          <WeatherIcon condition={weather.condition} size={72} />
+        </motion.div>
+      </div>
 
-      {/* Price */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
-        <div className="text-5xl font-bold text-white tracking-tight mb-2">
-          {formatPrice(current.price)}
-        </div>
+      <div style={{ display:'flex',alignItems:'flex-end',justifyContent:'space-between' }}>
+        <motion.div style={{ fontSize:68,fontWeight:200,color:'#fff',lineHeight:1,letterSpacing:'-0.04em' }}
+          initial={{ opacity:0,y:10 }} animate={{ opacity:1,y:0 }} transition={{ delay:0.1 }}>
+          {Math.round(weather.score)}
+          <span style={{ fontSize:24,color:'rgba(255,255,255,0.22)',fontWeight:200 }}>°</span>
+        </motion.div>
+        <motion.div style={{ textAlign:'right' }} initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:0.2 }}>
+          <div style={{ fontSize:20,fontWeight:700,color:condColor }}>{CONDITION_LABELS[weather.condition]}</div>
+          <div style={{ fontSize:11,color:'rgba(255,255,255,0.35)',marginTop:1 }}>{SUBTITLES[weather.condition]}</div>
+          <div style={{ fontSize:17,fontWeight:600,color:'#fff',marginTop:4,fontFamily:'JetBrains Mono,monospace' }}>
+            {formatPrice(current.price)}</div>
+          <div style={{ fontSize:12,fontWeight:600,color:changeColor,fontFamily:'JetBrains Mono,monospace' }}>
+            {current.change_24h_pct>=0?'▲':'▼'} {formatChange(current.change_24h_pct)} today</div>
+        </motion.div>
+      </div>
 
-        <div className={`text-lg font-semibold ${changeColor}`}>
-          {formatChange(current.change_24h_pct)} today
-        </div>
-      </motion.div>
-
-      {/* Score & confidence */}
-      <motion.div
-        className="flex items-center justify-center gap-4 mt-5 pt-4 border-t border-white/10"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.35 }}
-      >
-        <div className="text-center">
-          <div className="text-xs text-white/40 uppercase tracking-wider mb-0.5">Score</div>
-          <div className="text-base font-bold text-white">{Math.round(weather.score)}</div>
-        </div>
-        <div className="w-px h-8 bg-white/10" />
-        <div className="text-center">
-          <div className="text-xs text-white/40 uppercase tracking-wider mb-0.5">Confidence</div>
-          <div className="text-base font-bold text-white">{forecast.confidence}%</div>
-        </div>
-        <div className="w-px h-8 bg-white/10" />
-        <div className="text-center">
-          <div className="text-xs text-white/40 uppercase tracking-wider mb-0.5">Signal</div>
-          <div className={`text-base font-bold ${conditionColor}`}>{icon}</div>
-        </div>
-      </motion.div>
+      <div style={{ display:'flex',borderTop:'1px solid rgba(255,255,255,0.07)',paddingTop:10,marginTop:10 }}>
+        {[
+          { label:'Confidence', value:`${forecast.confidence}%`, color:'#38bdf8' },
+          { label:'Score', value:`${Math.round(weather.score)}/100`, color:'#fbbf24' },
+          { label:'Volatility', value:'Medium', color:'#fff' },
+          { label:'Trend', value:'↑ Up', color:'#34d399' },
+        ].map((s,i) => (
+          <div key={s.label} style={{ flex:1,textAlign:'center',borderLeft:i>0?'1px solid rgba(255,255,255,0.07)':'none' }}>
+            <div style={{ fontSize:9,textTransform:'uppercase',letterSpacing:'0.1em',color:'rgba(255,255,255,0.28)',marginBottom:2 }}>{s.label}</div>
+            <div style={{ fontSize:12,fontWeight:600,color:s.color,fontFamily:'JetBrains Mono,monospace' }}>{s.value}</div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

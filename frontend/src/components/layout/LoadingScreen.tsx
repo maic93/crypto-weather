@@ -1,41 +1,34 @@
-// src/components/layout/LoadingScreen.tsx
+// frontend/src/components/layout/LoadingScreen.tsx
 'use client'
 import { motion } from 'framer-motion'
 
 export function LoadingScreen() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#070c18]">
-      <motion.div
-        className="text-5xl mb-6"
-        animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.1, 1] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        ⛅
-      </motion.div>
-      <motion.p
-        className="text-white/60 text-sm font-medium tracking-wide"
-        animate={{ opacity: [0.4, 1, 0.4] }}
-        transition={{ duration: 1.8, repeat: Infinity }}
-      >
+    <div style={{ height:'100dvh', display:'flex', flexDirection:'column',
+      alignItems:'center', justifyContent:'center', background:'#06091a', gap:16 }}>
+      <motion.div style={{ fontSize:48 }}
+        animate={{ rotate:[0,10,-10,0], scale:[1,1.1,1] }}
+        transition={{ duration:2, repeat:Infinity }}>⛅</motion.div>
+      <motion.p style={{ fontSize:13, color:'rgba(255,255,255,0.4)', letterSpacing:'0.06em' }}
+        animate={{ opacity:[0.4,1,0.4] }} transition={{ duration:1.8, repeat:Infinity }}>
         Checking the crypto weather…
       </motion.p>
     </div>
   )
 }
 
-// src/components/layout/ErrorScreen.tsx is merged here
 export function ErrorScreen({ error }: { error?: string }) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#070c18] px-6">
-      <div className="text-5xl mb-4">⛈️</div>
-      <h2 className="text-white font-semibold text-lg mb-2">Connection Error</h2>
-      <p className="text-white/50 text-sm text-center max-w-xs">
-        {error ?? 'Unable to reach the forecast service. Make sure the backend is running.'}
+    <div style={{ height:'100dvh', display:'flex', flexDirection:'column',
+      alignItems:'center', justifyContent:'center', background:'#06091a', gap:12, padding:24 }}>
+      <div style={{ fontSize:48 }}>⛈️</div>
+      <h2 style={{ fontSize:17, fontWeight:600, color:'#fff' }}>Connection Error</h2>
+      <p style={{ fontSize:13, color:'rgba(255,255,255,0.4)', textAlign:'center', maxWidth:280 }}>
+        {error ?? 'Unable to reach the forecast service.'}
       </p>
-      <button
-        className="mt-6 px-5 py-2 rounded-xl bg-white/10 border border-white/15 text-white/80 text-sm hover:bg-white/15 transition-colors"
-        onClick={() => window.location.reload()}
-      >
+      <button onClick={() => window.location.reload()}
+        style={{ marginTop:8, padding:'8px 20px', borderRadius:12, border:'1px solid rgba(255,255,255,0.15)',
+          background:'rgba(255,255,255,0.06)', color:'rgba(255,255,255,0.7)', fontSize:13, cursor:'pointer' }}>
         Try again
       </button>
     </div>

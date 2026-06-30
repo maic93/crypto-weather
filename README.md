@@ -11,39 +11,11 @@
 
 <div align="center">
 
-![Hero and forecast view](docs/screenshots/hero.png)
-
-![Price chart](docs/screenshots/chart.png)
-
-![Metrics and accuracy](docs/screenshots/metrics.png)
+![Crypto Weather app screenshot](docs/screenshots/app.png)
 
 </div>
 
----
-
-## What it looks like
-
-```
-Bitcoin
-⛅ Bullish
-
-Current Price: $108,250
-+2.36% today
-
-Today's Forecast:
-  High  $111,000    ↑
-  Low   $106,500    ↓
-  Confidence: 78%
-
-7-Day Outlook:
-  Thu  ⛅ Bullish      $105k – $112k   75%
-  Fri  ⛅ Bullish      $104k – $113k   67%
-  Sat  ☁️  Neutral      $103k – $114k   59%
-  Sun  ☁️  Neutral      $101k – $113k   51%
-  Mon  🌧️  Bearish      $99k  – $111k   43%
-  Tue  ☁️  Neutral      $100k – $112k   35%
-  Wed  ⛅ Bullish      $102k – $113k   27%
-```
+A single-screen, no-scroll dashboard inspired by Apple Weather: a large weather-style price reading, an animated BTC cloud/sun icon, an hourly forecast strip, a 7-day outlook, and a market overview grid (Fear & Greed, buying/selling pressure, dominance, volume) — all in one view.
 
 ---
 
@@ -52,20 +24,20 @@ Today's Forecast:
 | Layer    | Technology                              |
 |----------|-----------------------------------------|
 | Frontend | Next.js 14 · TypeScript · Tailwind CSS  |
-| UI       | Framer Motion · Recharts                |
-| Data     | TanStack Query                          |
-| Backend  | FastAPI · Python 3.12                   |
+| UI       | Framer Motion · custom SVG weather icons|
+| Data     | TanStack Query · Next.js API routes     |
+| Backend  | FastAPI · Python 3.12 (local/Docker)    |
 | Analysis | Pandas · NumPy · scikit-learn           |
-| DB       | PostgreSQL · SQLAlchemy                 |
+| DB       | PostgreSQL · SQLAlchemy · Supabase      |
 | Tests    | Pytest (90% coverage) · Vitest (93%)    |
 | CI/CD    | GitHub Actions                          |
-| Deploy   | Vercel · Supabase                       |
+| Deploy   | Vercel                                  |
 
 ---
 
 ## Quick Start
 
-### With Docker (recommended)
+### With Docker (recommended for local dev)
 
 ```bash
 git clone https://github.com/maic93/crypto-weather
@@ -120,7 +92,7 @@ npm run dev
 # Backend — 77 tests, 90% coverage
 cd backend && pytest
 
-# Frontend — 60 tests, 93% coverage
+# Frontend — 63 tests, 93% coverage
 cd frontend && npm test
 ```
 
@@ -133,13 +105,13 @@ crypto-weather/
 ├── frontend/
 │   ├── src/
 │   │   ├── app/
-│   │   │   └── api/           # Next.js API routes (forecast engine)
+│   │   │   └── api/           # Next.js API routes (TS forecast engine)
 │   │   ├── components/
-│   │   │   ├── cards/         # HeroCard, ForecastCard, SevenDayCard…
-│   │   │   ├── charts/        # PriceChart (recharts)
-│   │   │   └── layout/        # AnimatedBackground, LoadingScreen…
+│   │   │   ├── cards/         # HeroCard, ForecastCard, SevenDayCard, MarketMetricsCard
+│   │   │   ├── layout/        # AnimatedBackground, BottomNav, LoadingScreen
+│   │   │   └── ui/            # WeatherIcon (BTC cloud/sun SVG)
 │   │   ├── hooks/             # TanStack Query hooks
-│   │   ├── lib/               # forecast engine, utils, api client
+│   │   ├── lib/               # forecast engine, CoinGecko client, utils
 │   │   └── types/             # TypeScript interfaces
 │   └── src/tests/             # Vitest unit + component tests
 │

@@ -55,14 +55,15 @@ export function HeroCard({ forecast }: Props) {
       </div>
 
       <div style={{ display:'flex',alignItems:'flex-end',justifyContent:'space-between' }}>
-        {/* Score on the left */}
-        <motion.div style={{ fontSize:60, fontWeight:200, color:'#fff', lineHeight:1, letterSpacing:'-0.04em', display:'flex', alignItems:'flex-start' }}
+        {/* Price as weather-style temperature: $59,209 -> 59°209 */}
+        <motion.div style={{ fontSize:52, fontWeight:200, color:'#fff', lineHeight:1, letterSpacing:'-0.03em', display:'flex', alignItems:'flex-start' }}
           initial={{ opacity:0,y:10 }} animate={{ opacity:1,y:0 }} transition={{ delay:0.1 }}>
-          {Math.round(weather.score)}
-          <span style={{ fontSize:20,color:'rgba(255,255,255,0.22)',fontWeight:200,marginTop:2 }}>°</span>
+          {Math.floor(current.price / 1000)}
+          <span style={{ fontSize:18,color:'rgba(255,255,255,0.22)',fontWeight:200,marginTop:1 }}>°</span>
+          <span style={{ fontSize:30,fontWeight:300,marginLeft:2 }}>{String(Math.round(current.price % 1000)).padStart(3,'0')}</span>
         </motion.div>
 
-        {/* Condition + actual price on the right */}
+        {/* Condition + score on the right */}
         <motion.div style={{ textAlign:'right' }} initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:0.2 }}>
           <div style={{ fontSize:19, fontWeight:700, color:condColor }}>{CONDITION_LABELS[weather.condition]}</div>
           <div style={{ fontSize:10.5, color:'rgba(255,255,255,0.35)', marginTop:1 }}>{SUBTITLES[weather.condition]}</div>

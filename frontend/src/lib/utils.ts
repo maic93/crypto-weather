@@ -74,3 +74,9 @@ export function formatDate(dateStr: string, format: 'short' | 'day' | 'full' = '
   if (format === 'full') return date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
+
+export function getChangeColorHex(change: number): string {
+  if (change > 0) return '#34d399'
+  if (change < 0) return '#f87171'
+  return '#ffffff'
+}

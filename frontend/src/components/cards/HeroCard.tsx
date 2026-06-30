@@ -2,7 +2,7 @@
 'use client'
 import { motion } from 'framer-motion'
 import { WeatherIcon } from '@/components/ui/WeatherIcon'
-import { formatPrice, formatChange, getChangeColor } from '@/lib/utils'
+import { formatPrice, formatChange, getChangeColorHex } from '@/lib/utils'
 import type { ForecastData } from '@/types'
 
 const CONDITION_LABELS: Record<string, string> = {
@@ -25,8 +25,9 @@ interface Props { forecast: ForecastData }
 
 export function HeroCard({ forecast }: Props) {
   const { current, weather } = forecast
-  const changeColor = getChangeColor(current.change_24h_pct)
+  const changeColor = getChangeColorHex(current.change_24h_pct)
   const condColor = CONDITION_COLORS[weather.condition] ?? '#94a3b8'
+  const arrow = current.change_24h_pct > 0 ? '▲' : current.change_24h_pct < 0 ? '▼' : '–'
 
   return (
     <div style={{
@@ -54,18 +55,23 @@ export function HeroCard({ forecast }: Props) {
       </div>
 
       <div style={{ display:'flex',alignItems:'flex-end',justifyContent:'space-between' }}>
-        <motion.div style={{ fontSize:68,fontWeight:200,color:'#fff',lineHeight:1,letterSpacing:'-0.04em' }}
+        {/* Score on the left */}
+        <motion.div style={{ fontSize:60, fontWeight:200, color:'#fff', lineHeight:1, letterSpacing:'-0.04em', display:'flex', alignItems:'flex-start' }}
           initial={{ opacity:0,y:10 }} animate={{ opacity:1,y:0 }} transition={{ delay:0.1 }}>
           {Math.round(weather.score)}
-          <span style={{ fontSize:24,color:'rgba(255,255,255,0.22)',fontWeight:200 }}>°</span>
+          <span style={{ fontSize:20,color:'rgba(255,255,255,0.22)',fontWeight:200,marginTop:2 }}>°</span>
         </motion.div>
+
+        {/* Condition + actual price on the right */}
         <motion.div style={{ textAlign:'right' }} initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:0.2 }}>
-          <div style={{ fontSize:20,fontWeight:700,color:condColor }}>{CONDITION_LABELS[weather.condition]}</div>
-          <div style={{ fontSize:11,color:'rgba(255,255,255,0.35)',marginTop:1 }}>{SUBTITLES[weather.condition]}</div>
-          <div style={{ fontSize:17,fontWeight:600,color:'#fff',marginTop:4,fontFamily:'JetBrains Mono,monospace' }}>
-            {formatPrice(current.price)}</div>
-          <div style={{ fontSize:12,fontWeight:600,color:changeColor,fontFamily:'JetBrains Mono,monospace' }}>
-            {current.change_24h_pct>=0?'▲':'▼'} {formatChange(current.change_24h_pct)} today</div>
+          <div style={{ fontSize:19, fontWeight:700, color:condColor }}>{CONDITION_LABELS[weather.condition]}</div>
+          <div style={{ fontSize:10.5, color:'rgba(255,255,255,0.35)', marginTop:1 }}>{SUBTITLES[weather.condition]}</div>
+          <div style={{ fontSize:19, fontWeight:700, color:'#fff', marginTop:6, fontFamily:'JetBrains Mono,monospace', letterSpacing:'-0.01em' }}>
+            {formatPrice(current.price)}
+          </div>
+          <div style={{ fontSize:12, fontWeight:600, color:changeColor, fontFamily:'JetBrains Mono,monospace', marginTop:1 }}>
+            {arrow} {formatChange(current.change_24h_pct)} today
+          </div>
         </motion.div>
       </div>
 

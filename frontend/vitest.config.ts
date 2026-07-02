@@ -17,15 +17,21 @@ export default defineConfig({
         '**/*.config.*',
         '**/next-env.d.ts',
         'src/types/**',
+        // Next.js app shell files
         'src/app/layout.tsx',
         'src/app/providers.tsx',
-        'src/app/page.tsx',
-        'src/hooks/**',
-        'src/lib/api.ts',
-        // Server-side files - Next.js API routes and server libs
+        // All page-level files (Next.js pages are not unit-testable in jsdom)
+        'src/app/**/page.tsx',
+        // Server-side libs
         'src/app/api/**',
         'src/lib/coingecko-server.ts',
         'src/lib/forecast-engine.ts',
+        'src/hooks/**',
+        'src/lib/api.ts',
+        // Layout components that need full app context
+        'src/components/layout/AnimatedBackground.tsx',
+        'src/components/layout/LoadingScreen.tsx',
+        'src/components/layout/ErrorScreen.tsx',
       ],
       thresholds: { lines: 70 },
     },

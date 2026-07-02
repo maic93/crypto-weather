@@ -55,24 +55,26 @@ export function HeroCard({ forecast }: Props) {
       </div>
 
       <div style={{ display:'flex',alignItems:'flex-end',justifyContent:'space-between' }}>
-        {/* Price as weather-style temperature: $59,209 -> 59°209 */}
-        <motion.div style={{ fontSize:52, fontWeight:200, color:'#fff', lineHeight:1, letterSpacing:'-0.03em', display:'flex', alignItems:'flex-start' }}
+        {/* Left: weather-style price 58°954 + actual price */}
+        <motion.div style={{ display:'flex', flexDirection:'column' }}
           initial={{ opacity:0,y:10 }} animate={{ opacity:1,y:0 }} transition={{ delay:0.1 }}>
-          {Math.floor(current.price / 1000)}
-          <span style={{ fontSize:18,color:'rgba(255,255,255,0.22)',fontWeight:200,marginTop:1 }}>°</span>
-          <span style={{ fontSize:30,fontWeight:300,marginLeft:2 }}>{String(Math.round(current.price % 1000)).padStart(3,'0')}</span>
-        </motion.div>
-
-        {/* Condition + score on the right */}
-        <motion.div style={{ textAlign:'right' }} initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:0.2 }}>
-          <div style={{ fontSize:19, fontWeight:700, color:condColor }}>{CONDITION_LABELS[weather.condition]}</div>
-          <div style={{ fontSize:10.5, color:'rgba(255,255,255,0.35)', marginTop:1 }}>{SUBTITLES[weather.condition]}</div>
-          <div style={{ fontSize:19, fontWeight:700, color:'#fff', marginTop:6, fontFamily:'JetBrains Mono,monospace', letterSpacing:'-0.01em' }}>
+          <div style={{ fontSize:52, fontWeight:200, color:'#fff', lineHeight:1, letterSpacing:'-0.03em', display:'flex', alignItems:'flex-start' }}>
+            {Math.floor(current.price / 1000)}
+            <span style={{ fontSize:18,color:'rgba(255,255,255,0.22)',fontWeight:200,marginTop:2 }}>°</span>
+            <span style={{ fontSize:28,fontWeight:300,color:'rgba(255,255,255,0.7)',marginLeft:3,marginTop:6 }}>{String(Math.round(current.price % 1000)).padStart(3,'0')}</span>
+          </div>
+          <div style={{ fontSize:17, fontWeight:700, color:'#fff', marginTop:4, fontFamily:'JetBrains Mono,monospace' }}>
             {formatPrice(current.price)}
           </div>
           <div style={{ fontSize:12, fontWeight:600, color:changeColor, fontFamily:'JetBrains Mono,monospace', marginTop:1 }}>
             {arrow} {formatChange(current.change_24h_pct)} today
           </div>
+        </motion.div>
+
+        {/* Right: condition label only */}
+        <motion.div style={{ textAlign:'right' }} initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:0.2 }}>
+          <div style={{ fontSize:19, fontWeight:700, color:condColor }}>{CONDITION_LABELS[weather.condition]}</div>
+          <div style={{ fontSize:10.5, color:'rgba(255,255,255,0.35)', marginTop:1 }}>{SUBTITLES[weather.condition]}</div>
         </motion.div>
       </div>
 

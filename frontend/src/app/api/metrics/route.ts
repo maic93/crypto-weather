@@ -3,9 +3,12 @@ import { NextResponse } from 'next/server'
 import { fetchOHLC } from '@/lib/coingecko-server'
 import { runForecast } from '@/lib/forecast-engine'
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const coin = searchParams.get('coin') ?? 'bitcoin'
+
   try {
-    const ohlc = await fetchOHLC(90)
+    const ohlc = await fetchOHLC(90, coin)
     const result = runForecast(ohlc)
 
     return NextResponse.json({

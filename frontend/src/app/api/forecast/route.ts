@@ -3,11 +3,14 @@ import { NextResponse } from 'next/server'
 import { fetchCurrentPrice, fetchOHLC } from '@/lib/coingecko-server'
 import { runForecast, runSevenDay } from '@/lib/forecast-engine'
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const coin = searchParams.get('coin') ?? 'bitcoin'
+
   try {
     const [priceData, ohlc] = await Promise.all([
-      fetchCurrentPrice(),
-      fetchOHLC(30),
+      fetchCurrentPrice(coin),
+      fetchOHLC(30, coin),
     ])
 
     const result = runForecast(ohlc)

@@ -7,6 +7,7 @@ import { BottomNav } from '@/components/layout/BottomNav'
 import { formatPrice } from '@/lib/utils'
 import { COINS } from '@/components/cards/HeroCard'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
+import type { HistoricalDay } from '@/types'
 
 function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{value: number}>; label?: string }) {
   if (!active || !payload?.length) return null
@@ -27,7 +28,7 @@ export default function RadarPage() {
   const metrics = useMetrics(selectedCoin)
 
   const coin = COINS.find(c => c.id === selectedCoin) ?? COINS[0]
-  const chartData = (history.data ?? []).map(d => ({
+  const chartData = (history.data ?? []).map((d: HistoricalDay) => ({
     label: new Date(d.date).toLocaleDateString('en-US', { month:'short', day:'numeric' }),
     price: d.close,
   }))
@@ -83,7 +84,7 @@ export default function RadarPage() {
                     <XAxis dataKey="label" tick={{ fill:'rgba(255,255,255,0.25)',fontSize:9 }}
                       tickLine={false} axisLine={false} interval="preserveStartEnd"/>
                     <YAxis tick={{ fill:'rgba(255,255,255,0.25)',fontSize:9 }} tickLine={false}
-                      axisLine={false} tickFormatter={v => `$${v>=1000?Math.round(v/1000)+'k':v.toFixed(2)}`} width={42}/>
+                      axisLine={false} tickFormatter={(v: number) => `$${v>=1000?Math.round(v/1000)+'k':v.toFixed(2)}`} width={42}/>
                     <Tooltip content={<CustomTooltip />}/>
                     <Line type="monotone" dataKey="price" stroke={isUp?'#34d399':'#f87171'}
                       strokeWidth={2} dot={false} activeDot={{ r:3 }}/>
